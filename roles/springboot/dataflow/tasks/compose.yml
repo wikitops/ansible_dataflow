@@ -1,0 +1,59 @@
+---
+
+- name: SPRINGBOOT DATAFLOW DOCKER | Manage RabbitMQ container
+  docker_container:
+    image: "{{ dataflow_rabbitmq_image }}"
+    name: dataflow-rabbitmq
+    networks:
+      - name: "{{ dataflow_docker_network.name }}"
+    ports:
+      - "5672:5672"
+    state: started
+
+- name: SPRINGBOOT DATAFLOW DOCKER | Manage Redis container
+  docker_container:
+    image: "{{ dataflow_redis_image }}"
+    name: dataflow-redis
+    networks:
+      - name: "{{ dataflow_docker_network.name }}"
+    ports:
+      - "6379:6379"
+    state: started
+
+- name: SPRINGBOOT DATAFLOW DOCKER | Manage MariaDB container
+  docker_container:
+    env:
+      MYSQL_DATABASE: "{{ dataflow_mariadb_database }}"
+      MYSQL_USER: "{{ dataflow_mariadb_user }}"
+      MYSQL_ROOT_PASSWORD: "{{ dataflow_mariadb_password }}"
+    image: "{{ dataflow_mariadb_image }}"
+    name: dataflow-mariadb
+    networks:
+      - name: "{{ dataflow_docker_network.name }}"
+    ports:
+      - "3306:3306"
+    state: started
+
+- name: SPRINGBOOT DATAFLOW DOCKER | Manage Data Flow Server container
+  docker_container:
+    env:
+      spring_datasource_url: jdbc:mysql://dataflow-mariadb:3306/dataflow
+      spring_datasource_username: "{{ dataflow_mariadb_user }}"
+      spring_datasource_password: "{{ dataflow_mariadb_password }}"
+      spring.datasource.driver-class-name: org.mariadb.jdbc.Driver
+      spring.cloud.dataflow.applicationProperties.stream.spring.rabbitmq.host: dataflow-rabbitmq
+      spring.cloud.dataflow.applicationProperties.stream.spring.redis.host: dataflow-redis
+      spring_redis_host: dataflow-redis
+    image: "{{ dataflow_image }}"
+    links:
+      - "dataflow-mariadb"
+      - "dataflow-rabbitmq"
+      - "dataflow-redis"
+    name: dataflow-server
+    networks:
+      - name: "{{ dataflow_docker_network.name }}"
+    ports: "{{ dataflow_ports }}"
+    restart: yes
+    state: started
+    volumes:
+      - "/data:/data"

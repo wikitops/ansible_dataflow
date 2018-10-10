@@ -1,0 +1,13 @@
+---
+
+- name: SPRINGBOOT DATAFLOW DOCKER | Manage network
+  import_tasks: network.yml
+  tags: update-dataflow-docker-network
+
+- name: SPRINGBOOT DATAFLOW DOCKER | Manage containers
+  import_tasks: compose.yml
+  tags: update-dataflow-docker-compose
+
+- name: SPRINGBOOT DATAFLOW DOCKER | Manage application import
+  import_tasks: application.yml
+  tags: update-dataflow-docker-application

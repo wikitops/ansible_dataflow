@@ -1,0 +1,6 @@
+---
+
+- name: SPRINGBOOT DATAFLOW DOCKER | Manage network
+  docker_network:
+    name: "{{ dataflow_docker_network.name }}"
+    state: "{{ dataflow_docker_network.state }}"

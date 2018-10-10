@@ -1,0 +1,16 @@
+---
+
+- name: SPRINGBOOT DATAFLOW DOCKER | Manage RabbitMQ container
+  docker_container:
+    image: alpine:3.7
+    name: dataflow-app-import
+    networks:
+      - name: dataflow
+    command: >
+      /bin/sh -c "
+        while ! nc -z dataflow-server 9393;
+        do
+          sleep 1;
+        done;
+        wget -qO- 'http://dataflow-server:9393/apps' --post-data='uri={{ item }}&force=true';"
+  with_items: "{{ dataflow_applications }}"

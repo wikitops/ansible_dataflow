@@ -1,0 +1,34 @@
+---
+
+###
+# SPRINGBOOT DATA FLOW
+###
+
+# Docker Network
+dataflow_docker_network:
+  name: dataflow
+  state: present
+
+# Docker RabbitMQ
+dataflow_rabbitmq_image: "rabbitmq:3-management"
+
+# Docker Redis
+dataflow_redis_image: "redis"
+
+# Docker MariaDB
+dataflow_mariadb_image: "mariadb:10.2"
+dataflow_mariadb_database: dataflow
+dataflow_mariadb_user: root
+dataflow_mariadb_password: dataflow
+
+# Docker Data Flow server
+dataflow_version: "1.6.3.RELEASE"
+dataflow_image: "springcloud/spring-cloud-dataflow-server-local:{{ dataflow_version }}"
+dataflow_ports:
+  - "9393:9393"
+  - "9000:9000"
+
+# Docker Data Flow Applications
+dataflow_applications:
+  - https://bit.ly/Celsius-SR1-stream-applications-rabbit-maven   # RabbitMQ Applications
+  - http://bit.ly/Clark-GA-task-applications-maven                # Tasks Applications
