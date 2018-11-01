@@ -1,7 +1,7 @@
 ---
 
-- hosts: redis
+- hosts: dataflow
   remote_user: vagrant
   become: yes
   roles:
-    - redis
+    - dataflow
